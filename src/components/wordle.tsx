@@ -6,6 +6,7 @@ import { GameStatus } from "./types";
 import { useWindow } from "../hooks/useWindow";
 
 import styles from "./wordle.module.scss";
+import { getWordOfTheDay, isValidWord } from "../services/request";
 
 const keys = [
   "Q",
@@ -46,7 +47,7 @@ export default function Wordle() {
     useWindow('keydown',handleKeyDown);
 
     useEffect(()=> {
-        setWordOfTheDay("BREAK");
+        setWordOfTheDay(getWordOfTheDay());
     })
 
     function handleKeyDown(event:KeyboardEvent) {
@@ -86,7 +87,7 @@ export default function Wordle() {
         setCurrentWord(newWord)
     }
 
-    function onEnter(){
+    async function onEnter(){
         if (currentWord === wordOfTheDay) {
             setCompletedWords([...completedWords, currentWord]);
             setGameStatus(GameStatus.Won);
@@ -96,6 +97,13 @@ export default function Wordle() {
         if (turn === 6) {
             setCompletedWords([...completedWords, currentWord]);
             setGameStatus(GameStatus.Lost);
+            return;
+        }
+
+        const validWord = await isValidWord(currentWord);
+
+        if (currentWord.length === 5 && !validWord) {
+            alert("Not a valid word");
             return;
         }
 
