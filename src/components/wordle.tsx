@@ -8,6 +8,7 @@ import { useWindow } from "../hooks/useWindow";
 import styles from "./wordle.module.scss";
 import { getWordOfTheDay, isValidWord } from "../services/request";
 import Keyboard from "./keyboard";
+import Modal from "./modal";
 
 const keys = [
   "Q",
@@ -119,6 +120,19 @@ export default function Wordle() {
 
   return (
     <>
+      {gameStatus === GameStatus.Won ? (
+        <Modal
+          type="won"
+          completedWords={completedWords}
+          solution={wordOfTheDay}
+        />
+      ) : gameStatus === GameStatus.Lost ? (
+        <Modal
+          type="lost"
+          completedWords={completedWords}
+          solution={wordOfTheDay}
+        />
+      ) : null}
       <div className={styles.mainContainer}>
         {completedWords.map((word, i) => (
           <RowCompleted key={i} word={word} solution={wordOfTheDay} />
