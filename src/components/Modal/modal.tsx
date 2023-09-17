@@ -1,6 +1,6 @@
 import styles from "./modal.module.scss";
 import { getWordOfTheDay } from "../../services/request";
-import Countdown from "../Countdown/countdown"; // Asegúrate de proporcionar la ruta correcta
+import Countdown from "../Countdown/countdown";
 
 interface ModalProps {
   type: "won" | "lost";

@@ -50,8 +50,21 @@ export default function Wordle() {
   useWindow("keydown", handleKeyDown);
 
   useEffect(() => {
+    if (localStorage.getItem("word") !== getWordOfTheDay()) {
+      localStorage.removeItem("word");
+      localStorage.removeItem("result");
+    }
+
+    if (localStorage.getItem("result") === "won") {
+      setGameStatus(GameStatus.Won);
+    }
+
+    if (localStorage.getItem("result") === "lost") {
+      setGameStatus(GameStatus.Lost);
+    }
+
     setWordOfTheDay(getWordOfTheDay());
-  }, []);
+  }, [wordOfTheDay]);
 
   function handleKeyDown(event: KeyboardEvent) {
     const letter = event.key.toUpperCase();
@@ -132,7 +145,7 @@ export default function Wordle() {
   }
 
   function saveResults(result: string) {
-    localStorage.setItem("status", "finished");
+    localStorage.setItem("word", wordOfTheDay);
     localStorage.setItem("result", result);
   }
 

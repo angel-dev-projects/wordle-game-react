@@ -19,6 +19,8 @@ const Countdown: React.FC<CountdownProps> = () => {
       if (difference <= 0) {
         clearInterval(intervalId);
         setTimeLeft(0);
+        // eslint-disable-next-line no-restricted-globals
+        location.reload();
       } else {
         setTimeLeft(difference);
       }
