@@ -9,6 +9,7 @@ import { getWordOfTheDay, isValidWord } from "../../services/request";
 import Keyboard from "../Keyboard/keyboard";
 import Modal from "../Modal/modal";
 import { ToastContainer, toast } from "react-toastify";
+import Confetti from "../Confetti/confetti";
 
 const keys = [
   "Q",
@@ -114,12 +115,14 @@ export default function Wordle() {
     if (currentWord === wordOfTheDay) {
       setCompletedWords([...completedWords, currentWord]);
       setGameStatus(GameStatus.Won);
+      saveResults("won");
       return;
     }
 
     if (turn === 6) {
       setCompletedWords([...completedWords, currentWord]);
       setGameStatus(GameStatus.Lost);
+      saveResults("lost");
       return;
     }
 
@@ -128,14 +131,22 @@ export default function Wordle() {
     setCurrentWord("");
   }
 
+  function saveResults(result: string) {
+    localStorage.setItem("status", "finished");
+    localStorage.setItem("result", result);
+  }
+
   return (
     <>
       {gameStatus === GameStatus.Won ? (
-        <Modal
-          type="won"
-          completedWords={completedWords}
-          solution={wordOfTheDay}
-        />
+        <>
+          <Modal
+            type="won"
+            completedWords={completedWords}
+            solution={wordOfTheDay}
+          />
+          <Confetti />
+        </>
       ) : gameStatus === GameStatus.Lost ? (
         <Modal
           type="lost"

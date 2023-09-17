@@ -1,4 +1,4 @@
-import { WORDS } from "./words";
+import { WORDS } from "../assets/utils/words";
 
 function getWords() {
   return WORDS;
@@ -19,7 +19,6 @@ export async function isValidWord(word: string) {
 
     return json.length;
   } catch (e) {
-    console.log(e);
     return false;
   }
 }
