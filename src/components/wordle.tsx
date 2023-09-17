@@ -7,6 +7,7 @@ import { useWindow } from "../hooks/useWindow";
 
 import styles from "./wordle.module.scss";
 import { getWordOfTheDay, isValidWord } from "../services/request";
+import Keyboard from "./keyboard";
 
 const keys = [
   "Q",
@@ -38,96 +39,100 @@ const keys = [
 ];
 
 export default function Wordle() {
-    const [wordOfTheDay, setWordOfTheDay] = useState<string>("");
-    const [turn,setTurn] =useState<number>(1)
-    const [currentWord,setCurrentWord]= useState<string>("");
-    const [completedWords,setCompletedWords]= useState<string[]>([]);
-    const [gameStatus,setGameStatus]= useState<GameStatus>(GameStatus.Playing);
+  const [wordOfTheDay, setWordOfTheDay] = useState<string>("");
+  const [turn, setTurn] = useState<number>(1);
+  const [currentWord, setCurrentWord] = useState<string>("");
+  const [completedWords, setCompletedWords] = useState<string[]>([]);
+  const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.Playing);
 
-    useWindow('keydown',handleKeyDown);
+  useWindow("keydown", handleKeyDown);
 
-    useEffect(()=> {
-        setWordOfTheDay(getWordOfTheDay());
-    })
+  useEffect(() => {
+    setWordOfTheDay(getWordOfTheDay());
+  });
 
-    function handleKeyDown(event:KeyboardEvent) {
-        const letter = event.key.toUpperCase()
+  function handleKeyDown(event: KeyboardEvent) {
+    const letter = event.key.toUpperCase();
 
-        if(gameStatus !== GameStatus.Playing){
-            return;
-        }
+    onKeyPressed(letter);
+  }
 
-        if(event.key==="Backspace" && currentWord.length>0){
-            onDelete()
-            return;
-        }
-
-        if(event.key==="Enter" && currentWord.length === 5 && turn <=6){
-            onEnter()
-            return;
-        }
-
-        if(currentWord.length>=5){
-            return;
-        }
-
-        if(keys.includes(letter)){
-            onInput(letter);
-            return;
-        }
+  function onKeyPressed(key: string) {
+    if (gameStatus !== GameStatus.Playing) {
+      return;
     }
 
-    function onInput(letter:string){
-        const newWord = currentWord + letter;
-        setCurrentWord(newWord);
+    if (key === "BACKSPACE" && currentWord.length > 0) {
+      onDelete();
+      return;
     }
 
-    function onDelete(){
-        const newWord = currentWord.slice(0,-1)
-        setCurrentWord(newWord)
+    if (key === "ENTER" && currentWord.length === 5 && turn <= 6) {
+      onEnter();
+      return;
     }
 
-    async function onEnter(){
-        if (currentWord === wordOfTheDay) {
-            setCompletedWords([...completedWords, currentWord]);
-            setGameStatus(GameStatus.Won);
-            return;
-        }
-
-        if (turn === 6) {
-            setCompletedWords([...completedWords, currentWord]);
-            setGameStatus(GameStatus.Lost);
-            return;
-        }
-
-        const validWord = await isValidWord(currentWord);
-
-        if (currentWord.length === 5 && !validWord) {
-            alert("Not a valid word");
-            return;
-        }
-
-        setCompletedWords([...completedWords, currentWord]);
-        setTurn(turn + 1);
-        setCurrentWord("");
+    if (currentWord.length >= 5) {
+      return;
     }
 
-    return (
-        <div className={styles.mainContainer}>
-            {completedWords.map((word, i) => (
-            <RowCompleted
-                key={i}
-                word={word}
-                solution={wordOfTheDay}
-            />
-            ))}
+    if (keys.includes(key)) {
+      onInput(key);
+      return;
+    }
+  }
 
-            {gameStatus === GameStatus.Playing ? (
-            <RowCurrent word={currentWord} />
-            ) : null}
+  function onInput(letter: string) {
+    const newWord = currentWord + letter;
+    setCurrentWord(newWord);
+  }
 
-            {Array.from(Array(6 - turn)).map((_, i) => (
-            <RowEmpty key={i} />
-            ))}
-        </div>)
+  function onDelete() {
+    const newWord = currentWord.slice(0, -1);
+    setCurrentWord(newWord);
+  }
+
+  async function onEnter() {
+    if (currentWord === wordOfTheDay) {
+      setCompletedWords([...completedWords, currentWord]);
+      setGameStatus(GameStatus.Won);
+      return;
+    }
+
+    if (turn === 6) {
+      setCompletedWords([...completedWords, currentWord]);
+      setGameStatus(GameStatus.Lost);
+      return;
+    }
+
+    const validWord = await isValidWord(currentWord);
+
+    if (currentWord.length === 5 && !validWord) {
+      alert("Not a valid word");
+      return;
+    }
+
+    setCompletedWords([...completedWords, currentWord]);
+    setTurn(turn + 1);
+    setCurrentWord("");
+  }
+
+  return (
+    <>
+      <div className={styles.mainContainer}>
+        {completedWords.map((word, i) => (
+          <RowCompleted key={i} word={word} solution={wordOfTheDay} />
+        ))}
+
+        {gameStatus === GameStatus.Playing ? (
+          <RowCurrent word={currentWord} />
+        ) : null}
+
+        {Array.from(Array(6 - turn)).map((_, i) => (
+          <RowEmpty key={i} />
+        ))}
+      </div>
+      <Keyboard keys={keys} onKeyPressed={onKeyPressed}></Keyboard>
+    </>
+  );
 }
