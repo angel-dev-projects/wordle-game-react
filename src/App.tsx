@@ -1,9 +1,16 @@
-import Wordle from "./components/wordle"
-import "./App.css"
+import Wordle from "./components/Wordle/wordle";
+import Header from "./components/Header/header";
+import Footer from "./components/Footer/footer";
+import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <Wordle></Wordle>
+    <>
+      <Header></Header>
+      <Wordle></Wordle>
+      <Footer></Footer>
+    </>
   );
 }
 

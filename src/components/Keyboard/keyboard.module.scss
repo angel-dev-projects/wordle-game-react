@@ -15,6 +15,7 @@
     flex-wrap: wrap;
     width: 570px;
     margin: 0 auto;
+    margin-bottom: 50px;
     gap: 5px;
 }
 
@@ -60,4 +61,12 @@
     background-color: #aaa;
     border: #aaa solid 2px;
     color: black;
+}
+
+button {
+    transition: transform 0.1s ease-in-out !important;
+}
+
+button:hover {
+    transform: scale(1.1);
 }

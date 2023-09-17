@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import RowCompleted from "./rowCompleted";
-import RowCurrent from "./rowCurrent";
-import RowEmpty from "./rowEmpty";
-import { GameStatus } from "./types";
-import { useWindow } from "../hooks/useWindow";
-
+import RowCompleted from "../Rows/rowCompleted";
+import RowCurrent from "../Rows/rowCurrent";
+import RowEmpty from "../Rows/rowEmpty";
+import { GameStatus } from "../../assets/utils/types";
+import { useWindow } from "../../hooks/useWindow";
 import styles from "./wordle.module.scss";
-import { getWordOfTheDay, isValidWord } from "../services/request";
-import Keyboard from "./keyboard";
-import Modal from "./modal";
+import { getWordOfTheDay, isValidWord } from "../../services/request";
+import Keyboard from "../Keyboard/keyboard";
+import Modal from "../Modal/modal";
+import { ToastContainer, toast } from "react-toastify";
 
 const keys = [
   "Q",
@@ -50,7 +50,7 @@ export default function Wordle() {
 
   useEffect(() => {
     setWordOfTheDay(getWordOfTheDay());
-  });
+  }, []);
 
   function handleKeyDown(event: KeyboardEvent) {
     const letter = event.key.toUpperCase();
@@ -94,6 +94,23 @@ export default function Wordle() {
   }
 
   async function onEnter() {
+    const validWord = await isValidWord(currentWord);
+
+    if (currentWord.length === 5 && !validWord) {
+      toast.error("Not a valid word!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+
+      return;
+    }
+
     if (currentWord === wordOfTheDay) {
       setCompletedWords([...completedWords, currentWord]);
       setGameStatus(GameStatus.Won);
@@ -103,13 +120,6 @@ export default function Wordle() {
     if (turn === 6) {
       setCompletedWords([...completedWords, currentWord]);
       setGameStatus(GameStatus.Lost);
-      return;
-    }
-
-    const validWord = await isValidWord(currentWord);
-
-    if (currentWord.length === 5 && !validWord) {
-      alert("Not a valid word");
       return;
     }
 
@@ -146,6 +156,7 @@ export default function Wordle() {
           <RowEmpty key={i} />
         ))}
       </div>
+      <ToastContainer />
       <Keyboard keys={keys} onKeyPressed={onKeyPressed}></Keyboard>
     </>
   );

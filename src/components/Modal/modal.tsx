@@ -1,4 +1,5 @@
 import styles from "./modal.module.scss";
+import { getWordOfTheDay } from "../../services/request";
 
 interface ModalProps {
   type: "won" | "lost";
@@ -37,6 +38,7 @@ export default function Modal({ type, completedWords, solution }: ModalProps) {
     <div className={styles.modalViewContainer}>
       <div className={styles.modalContainer}>
         <h2>You {type === "won" ? "won!" : "lost"}</h2>
+        <h3>The word was {getWordOfTheDay()}</h3>
 
         <div className={styles.puzzle}>
           {completedWords.map((word, i) => (

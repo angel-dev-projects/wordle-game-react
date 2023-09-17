@@ -1,8 +1,8 @@
-@import "./variables.scss";
+@import "../../assets/utils/variables.scss";
 
 .mainContainer {
     width: ($size * 5) + ($gap * 5);
-    margin: 100px auto;
+    margin: 50px auto;
 }
 
 .box {
