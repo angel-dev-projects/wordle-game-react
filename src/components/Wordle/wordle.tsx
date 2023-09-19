@@ -147,6 +147,33 @@ export default function Wordle() {
   function saveResults(result: string) {
     localStorage.setItem("word", wordOfTheDay);
     localStorage.setItem("result", result);
+
+    let games_played = parseInt(localStorage.getItem("games_played") || "0");
+    games_played += 1;
+    localStorage.setItem("games_played", games_played.toString());
+
+    let games_won = parseInt(localStorage.getItem("games_won") || "0");
+
+    let currentWinStreak = parseInt(
+      localStorage.getItem("currentWinStreak") || "0"
+    );
+
+    let bestWinStreak = parseInt(localStorage.getItem("bestWinStreak") || "0");
+
+    if (result === "won") {
+      games_won += 1;
+      localStorage.setItem("games_won", games_won.toString());
+
+      currentWinStreak += 1;
+      localStorage.setItem("currentWinStreak", currentWinStreak.toString());
+
+      if (currentWinStreak > bestWinStreak) {
+        localStorage.setItem("bestWinStreak", currentWinStreak.toString());
+      }
+    } else if (result === "lost") {
+      currentWinStreak = 0;
+      localStorage.setItem("currentWinStreak", currentWinStreak.toString());
+    }
   }
 
   return (

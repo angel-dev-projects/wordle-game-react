@@ -1,5 +1,5 @@
 import logo from "../../assets/imgs/wordle-logo.png";
-import "./header.module.scss";
+import "./header.css";
 
 export default function Header() {
   return (
